@@ -1,1 +1,12 @@
+#!/usr/bin/env bash
 export JAVA_HOME=/usr/lib/jvm/java-6-sun
+
+# load a specific eclipse workspace
+workspace() {
+    if [ "$#" != "1" ]; then
+        echo "usage: eclipse_workspace WORKSPACE_DIR"
+        return
+    fi
+    
+    $HOME/tools/eclipse3.7.1/eclipse -data $1 &
+}
