@@ -1,0 +1,2 @@
+export JAVA_HOME=/opt/jdk1.6.0_32
+export PATH="$JAVA_HOME/bin:$PATH"

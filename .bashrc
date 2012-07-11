@@ -9,6 +9,6 @@ fi
 source $HOME/.menv
 
 # load locals, if present
-if [ -f $HOME/.locals ]; then
-    source $HOME/.locals
+if [ -z $ENV_LOCAL ] && [ -e $ENV_LOCAL ]; then
+    source $ENV_LOCAL
 fi
