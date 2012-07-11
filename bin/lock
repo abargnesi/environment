@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# kill gnome-screensaver
+GNOMESS=$(hash gnome-screensaver > /dev/null 2>&1)
+if [ "$?" == "0" ]; then
+    killall gnome-screensaver > /dev/null 2>&1
+fi
+
+# lock using xscreensaver
+XSS=$(hash xscreensaver > /dev/null 2>&1)
+if [ "$?" != "0" ]; then
+    echo "'xscreensaver' is missing"
+fi
+XSS_CMD=$(hash xscreensaver-command > /dev/null 2>&1)
+if [ "$?" != "0" ]; then
+    echo "'xscreensaver-command' is missing"
+fi
+
+if ps ax | grep -v grep | grep xscreensaver > /dev/null
+then
+    xscreensaver-command -lock &
+else
+    xscreensaver &
+    xscreensaver-command -lock &
+fi
