@@ -1,0 +1,81 @@
+Xcursor.theme: LH
+Xft.antialias:    1
+Xft.dpi:  96
+Xft.hinting:  1
+Xft.hintstyle:    hintslight
+!Xft.rgba: rgb
+
+! Black
+*color0:  #333536
+*color8:  #575757
+
+! Red
+*color1:  #cc2929
+*color9:  #ef5858
+
+! Green
+*color2:  #88d23f
+*color10: #a1e261
+
+! Yellow
+*color3:  #edd92f
+*color11: #fcee81
+
+! Blue
+*color4:  #5578a4
+*color12: #9bb4cf
+
+! Purple
+*color5:  #78697b
+*color13: #ada1ac
+
+! Cyan
+*color6:  #559ea4
+*color14: #9eced2
+
+! White
+*color7:  #ffffff
+*color15: #FFFFFD
+
+*color16: #ff0000
+
+XTerm*dynamiccolors: false
+xterm*Background: #1e2021
+xterm*Foreground: white
+XTerm*allowSendEvents: True
+XTerm*sessionMgt: false
+XTerm*eightBitInput:  false
+XTerm*mainMenu*backgroundPixmap:     gradient:vertical?dimension=300&start=gray10&end=gray40
+XTerm*mainMenu*foreground:          white 
+XTerm*vtMenu*backgroundPixmap:       gradient:vertical?dimension=450&start=gray10&end=gray40
+XTerm*vtMenu*foreground:             white
+XTerm*fontMenu*backgroundPixmap:     gradient:vertical?dimension=200&start=gray10&end=gray40
+XTerm*fontMenu*foreground:           white
+XTerm*tekMenu*backgroundPixmap:      gradient:vertical?dimension=200&start=gray10&end=gray40
+XTerm*scrollBar: false
+XTerm*tekMenu*foreground:            white
+xterm*saveLines: 8192
+
+XTerm*font: -lfp-bright-medium-r-normal--12-90-75-75-c-60-iso10646-1
+XTerm*colorMode: true
+XTerm*locale: UTF-8
+XTerm*cursorUnderLine: false
+XTerm*saveLines: 16384
+XTerm*loginShell: true
+XTerm*alwaysHighlight: false
+XTerm*boldColors: false
+XTerm*boldMode: false
+XTerm*cursorBlink: true
+XTerm*freeBoldBox: true
+XTerm*cursorColor: #de1818
+XTerm*utf8: 1
+XTerm*encoding: utf8
+XTerm*internalBorder: 0
+XTerm*allowTitleOps: true
+XTerm*highlightColor: #444642
+XTerm*charClass: 0-31:48,33-255:48
+
+XTerm*ttyModes:         erase ^?
+XTerm*VT100.Translations: \
+        #override <Key>BackSpace: string(0x7f) \n\
+          <Key>Delete:    string(0x1b) string("[3~")
