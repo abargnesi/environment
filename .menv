@@ -31,8 +31,8 @@ alias bright='sudo echo "2000" > /sys/class/backlight/intel_backlight/brightness
 alias dark='sudo echo "500" > /sys/class/backlight/intel_backlight/brightness'
 alias rpack="dpkg -l | awk '/^[r]c/{print $2}'"
 alias ipack="dpkg -l | awk '/^[hi]i/{print $2}'"
-alias me="vim ~/.menv"
-alias mr="source ~/.menv"
+alias me="vim ~/.bashrc"
+alias mr="source ~/.bashrc"
 
 # functions
 
