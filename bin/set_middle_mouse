@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# remap menu to middle mouseee
+xmodmap -e 'keycode 135 = Pointer_Button2'
+
+# enable mouse keys and never expire
+xkbset m
+xkbset exp m
