@@ -1,0 +1,266 @@
+#!/usr/bin/env bash
+
+# env
+export PATH=$PATH:$HOME/bin:$HOME/work/git/mediawiki_cli:$JAVA_HOME/bin:$HOME/tools/bundlor/bin
+export SVN_ROOT=https://svn.assembla.com/svn/selventa_bel
+export SVN_EDITOR=vim
+export JAVA_OPTS="-ea -Xdebug -Xrunjdwp:transport=dt_socket,address=1044,server=y,suspend=n -XX:-HeapDumpOnOutOfMemoryError -XX:MaxPermSize=256M"
+export TERM="xterm-256color"
+export REPO_CD=$HOME/work/selventa_bel/belframework/branches/r1.2.0
+export GTK2_RC_FILES=$HOME/.themes/Clearlooks-DarkLime/gtk-2.0/gtkrc
+export VTS=$HOME/tools/osgi/vts
+export VTS_REPO_EXT=$VTS/repository/ext
+export VTS_REPO_USR=$VTS/repository/usr
+
+#aliases
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+alias netwho='ping -b -c 3 -i 20 192.168.100.255'
+alias ps-tomcat='ps -eo pid,args | grep "org.apache.catalina.startup.Bootstrap start" | grep -v grep | cut -c1-6'
+alias kill-tomcat='kill -9 `ps-tomcat` > /dev/null 2>&1'
+alias esify='mvn eclipse:clean eclipse:eclipse -DdownloadSources=true -DdownloadJavadocs=true'
+alias esify-nx='mvn eclipse:clean eclipse:eclipse'
+alias esify2.6='mvn2 org.apache.maven.plugins:maven-eclipse-plugin:2.6:clean org.apache.maven.plugins:maven-eclipse-plugin:2.6:eclipse -DdownloadSources=true -DdownloadJavadocs=true'
+alias esify2.6-nx='mvn2 org.apache.maven.plugins:maven-eclipse-plugin:2.6:clean org.apache.maven.plugins:maven-eclipse-plugin:2.6:eclipse'
+alias usage='du --max-depth=1 -h'
+alias less='less -FSRX'
+alias mvnopts='export MAVEN_OPTS="-ea -Xdebug -Xrunjdwp:transport=dt_socket,address=1044,server=y,suspend=n"'
+alias me='vim ~/.bashrc'
+alias mr='source ~/.bashrc'
+alias blinding='echo "4882" > /sys/class/backlight/intel_backlight/brightness'
+alias bright='sudo echo "2000" > /sys/class/backlight/intel_backlight/brightness'
+alias dark='sudo echo "500" > /sys/class/backlight/intel_backlight/brightness'
+alias rpack="dpkg -l | awk '/^[r]c/{print $2}'"
+alias ipack="dpkg -l | awk '/^[hi]i/{print $2}'"
+alias me="vim ~/.menv"
+alias mr="source ~/.menv"
+
+# functions
+
+# echo processes matching a string 
+_() {
+    ps -eo "%p[NEW]    %a" | grep -v grep | grep "$1" | sed -e 's/\[NEW\]/\n/g'
+}
+
+# echo a specific line in a file
+findline() {
+    if [ -z $2 ]; then
+        sed -n "$1 p"
+    else
+        sed -n "$1 p" $2
+    fi
+}
+
+set-release-version() {
+    mvn release:update-versions -DdevelopmentVersion=$1
+}
+
+smashpdf() {
+    INPUT_FILES=""
+    for INPUT_FILE in "$@"
+      do
+        if [ "$1" != "$INPUT_FILE" ]; then
+          INPUT_FILES=$INPUT_FILES" "$INPUT_FILE
+        fi
+      done
+
+    echo "in: $INPUT_FILES, out: $1"
+    gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=$1 $INPUT_FILES
+}
+
+rr() {
+    for i in $(find . -type f); do sed "s/$1/$2/g" $i > $i-tmp; mv $i $i-backup; mv $i-tmp $i; done
+}
+
+dij() {
+    rlwrap $HOME/tools/derby/bin/ij
+}
+
+dirdel() {
+    find . -type d -name $1 | xargs rm -fr
+}
+
+search_replace() {
+    FOUND=$(find . -regex $1 | wc -l)
+    if [ "$FOUND" == "0" ]; then
+        echo "Found 0 files for pattern: $REGEX_PATTERN"
+    else
+        find . -regex $1 -exec sed -i s/"$2"/"$3"/g {} \;
+    fi
+}
+
+sresolve() {
+    if [ "$#" != "1" ]; then
+        echo "usage: sresolve [PATH]"
+    else
+        svn resolve -R --accept working "$1"
+    fi
+}
+
+sin() {
+    LOCATION=""
+    if [ -z $1 ]; then
+        LOCATION="."
+    fi
+
+    svn diff -r BASE:HEAD $LOCATION
+}
+
+dbdump() {
+    if [ "$#" != "5" ]; then
+        echo "usage: dbdump HOST USER PASS DATABASE BZIP2_SQL_FILE"
+    else
+        mysqldump -h$1 -u$2 -p$3 $4 | bzip2 > "$5"
+    fi
+}
+export -f dbdump
+
+dbload() {
+    if [ "$#" != "3" ]; then
+        echo "usage: dbload USER DATABASE BZIP2_SQL_FILE"
+    else
+        # drop/create then load
+        echo "drop database if exists $2; create database $2;" | mysql -u$1
+        bunzip2 < $3 | mysql -u$1 $2
+    fi
+}
+export -f dbload
+
+remove_link() {
+    # read first parameter as a link
+    LINK=$1
+    if [ -z $LINK ]; then
+        echo "usage: remove_link [LINK]"
+    fi
+
+    if [ ! -L $LINK ]; then
+        echo "usage: remove_link [LINK]"
+    fi
+
+    # determine absolute link target
+    DIR=$(dirname $LINK)
+    LINK_TARGET=$(readlink "$LINK")
+    if [[ $LINK_TARGET == /* ]]; then
+        ABS_LINK_TARGET=$LINK_TARGET
+    else
+        ABS_LINK_TARGET=$DIR/$LINK_TARGET
+    fi
+
+    # remove link and replace with copied file, revert on fail
+    rm -fv "$LINK"
+    cp -afv "$ABS_LINK_TARGET" "$LINK" || {
+        # on failure, restore the symlink
+        rm -rfv "$LINK"
+        ln -sfv "$LINK_TARGET" "$LINK"
+    }
+}
+
+remove_all_links() {
+    for LINK in `find . -type l`
+    do
+        # determine absolute link target
+        DIR=$(dirname $LINK)
+        LINK_TARGET=$(readlink "$LINK")
+        if [[ $LINK_TARGET == /* ]]; then
+            ABS_LINK_TARGET=$LINK_TARGET
+        else
+            ABS_LINK_TARGET=$DIR/$LINK_TARGET
+        fi
+
+        # remove link and replace with copied file, revert on fail
+        rm -fv "$LINK"
+        cp -afv "$ABS_LINK_TARGET" "$LINK" || {
+            # on failure, restore the symlink
+            rm -rfv "$LINK"
+            ln -sfv "$LINK_TARGET" "$LINK"
+        }
+    done
+}
+
+mkdir-() {
+    mkdir $1; cd $1
+}
+
+cp-() {
+    cp $1 $2
+    
+    DIR=$(dirname $2)
+    if [ "$DIR" == "." ]
+    then
+        cd $2
+    else
+        cd $DIR
+    fi
+}
+
+# send a public key to a machine and concatenate with its authorized_keys2 file
+send-key() {
+    if [ "$#" != "2" ]; then
+        echo "usage: send-key PUB_KEY_FILE SSH_CONNECT_STRING"
+        return
+    fi
+
+    PUB_KEY_FILE=$1
+    SSH_CONNECT_STRING=$2
+
+    cat $PUB_KEY_FILE | ssh $SSH_CONNECT_STRING 'cat >> ~/.ssh/authorized_keys2'
+}
+
+# converts ns1 prefix to bel with exported XBEL files
+xbel-clean() {
+    if [ "$#" != 1 ]; then
+        echo "usage: xbel-clean [XBEL]"
+        exit 1
+    fi
+
+    XBEL_FILE="$1"
+    echo "Globally replacing ns1: with bel: for file \"$XBEL_FILE\""
+    sed -i 's/ns1:/bel:/g' "$XBEL_FILE"
+    sed -i 's/:ns1=/:bel=/g' "$XBEL_FILE"
+}
+
+# automatically runs maven unit tests when the file system is modified for a
+# particular directory
+testloop() {
+    if [ "$#" != "1" ]; then
+        echo "usage: testloop PROJECT_DIRECTORY"
+        return
+    fi
+
+    PROJECT_DIRECTORY=$1
+
+    if [ ! -d $PROJECT_DIRECTORY ]; then
+        echo "The input is not a directory."
+        return 
+    elif [ ! -f $PROJECT_DIRECTORY/pom.xml ]; then
+        echo "The directory does not contain a maven pom."
+        return
+    fi
+
+    HAS_MVN=$(hash mvn > /dev/null 2>&1)
+    if [ "$?" != "0" ]; then
+        echo "The 'mvn' command is required on your PATH."
+        return
+    fi
+
+    PROJECT=$(grep -Po '<name>(.*)</name>' $PROJECT_DIRECTORY/pom.xml)
+    PROJECT=${PROJECT#<name>}
+    PROJECT=${PROJECT%</name>}
+
+    cd $PROJECT_DIRECTORY
+    while inotifywait -q -r -e modify $PROJECT_DIRECTORY; do
+        mvn -q test
+        if [ "$?" != "0" ]; then
+            notify-send "Tests failed for $PROJECT"
+        fi
+
+        echo "Completed tests for $PROJECT"
+    done
+}
+
+# custom init
+if [ ! -z "$DISPLAY" ]; then
+	wmname LG3D
+    set_middle_mouse
+    xset r rate 180 100
+fi
+
