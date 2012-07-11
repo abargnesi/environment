@@ -1,3 +1,0 @@
-let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =1
-let g:netrw_dirhist_1='/home/tony/.belframework/cache/tmp/11e63ce2-93e4-4bf5-9c37-bb22c63e6ea5'
