@@ -41,6 +41,15 @@ _() {
     ps -eo "%p[NEW]    %a" | grep -v grep | grep "$1" | sed -e 's/\[NEW\]/\n/g'
 }
 
+# show battery status
+battery() {
+    NOW=$(cat /sys/class/power_supply/BAT0/energy_now)
+    FULL=$(cat /sys/class/power_supply/BAT0/energy_full)
+    STATUS=$(cat /sys/class/power_supply/BAT0/status)
+    REMAINING=$(echo "scale=1; $NOW / $FULL * 100" | bc)
+    echo "$REMAINING% ($STATUS)"
+}
+
 # echo a specific line in a file
 findline() {
     if [ -z $2 ]; then
