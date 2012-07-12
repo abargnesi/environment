@@ -266,6 +266,30 @@ testloop() {
     done
 }
 
+function local-git-dir() {
+    pwd | sha256sum | awk '{ print $1 }'
+}
+
+function local-git() {
+    if [ -z "${ENV_REPOS_PATH}" ]; then
+        echo "ENV_REPOS_PATH has not been set."
+        echo "--"
+        echo "I need this set to a directory so I can store"
+        echo "git metadata for every locally versioned directory."
+    fi  
+    git --git-dir="${ENV_REPOS_PATH}/$(local-git-dir)" --work-tree=$(pwd) $@
+}
+
+function local-git-init() {
+    if [ -z "${ENV_REPOS_PATH}" ]; then
+        echo "ENV_REPOS_PATH has not been set."
+        echo "--"
+        echo "I need this set to a directory so I can store"
+        echo "git metadata for every locally versioned directory."
+    fi  
+    GIT_DIR="${ENV_REPOS_PATH}/$(local-git-dir)" git init
+}
+
 # custom init
 if [ ! -z "$DISPLAY" ]; then
 	wmname LG3D
