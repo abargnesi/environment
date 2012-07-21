@@ -120,3 +120,4 @@ endfunction
 nnoremap <C-E> :Hexmode<CR>
 
 source $HOME/.vim/gtags.vim
+call pathogen#infect()
