@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
 # env
-export PATH=$PATH:$HOME/bin:$HOME/work/git/mediawiki_cli:$JAVA_HOME/bin:$HOME/tools/bundlor/bin
+export ANT_HOME=$HOME/tools/apache-ant-1.8.2
+export SCALA_HOME=$HOME/tools/scala
+export PATH=$PATH:$HOME/bin:$HOME/work/git/mediawiki_cli:$JAVA_HOME/bin:$HOME/tools/bundlor/bin:$ANT_HOME/bin:$SCALA_HOME/bin
 export EDITOR=xterm
+export TERMINAL=xterm
 export SVN_ROOT=https://svn.assembla.com/svn/selventa_bel
 export SVN_EDITOR=vim
 export JAVA_OPTS="-ea -Xdebug -Xrunjdwp:transport=dt_socket,address=1044,server=y,suspend=n -XX:-HeapDumpOnOutOfMemoryError -XX:MaxPermSize=256M"
@@ -25,15 +28,13 @@ alias esify2.6-nx='mvn2 org.apache.maven.plugins:maven-eclipse-plugin:2.6:clean 
 alias usage='du --max-depth=1 -h'
 alias less='less -FSRX'
 alias mvnopts='export MAVEN_OPTS="-ea -Xdebug -Xrunjdwp:transport=dt_socket,address=1044,server=y,suspend=n"'
-alias me='vim ~/.bashrc'
-alias mr='source ~/.bashrc'
 alias blinding='echo "4882" > /sys/class/backlight/intel_backlight/brightness'
 alias bright='sudo echo "2000" > /sys/class/backlight/intel_backlight/brightness'
 alias dark='sudo echo "500" > /sys/class/backlight/intel_backlight/brightness'
 alias rpack="dpkg -l | awk '/^[r]c/{print $2}'"
 alias ipack="dpkg -l | awk '/^[hi]i/{print $2}'"
-alias me="vim ~/.bashrc"
-alias mr="source ~/.bashrc"
+alias me="vim ~/.menv"
+alias mr="source ~/.menv"
 
 # functions
 
