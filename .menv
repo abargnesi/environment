@@ -4,7 +4,7 @@
 export ANT_HOME=$HOME/tools/apache-ant-1.8.2
 export SCALA_HOME=$HOME/tools/scala
 export PATH=$PATH:$HOME/bin:$HOME/work/git/mediawiki_cli:$JAVA_HOME/bin:$HOME/tools/bundlor/bin:$ANT_HOME/bin:$SCALA_HOME/bin
-export EDITOR=xterm
+export EDITOR=vim
 export TERMINAL=xterm
 export SVN_ROOT=https://svn.assembla.com/svn/selventa_bel
 export SVN_EDITOR=vim
@@ -35,6 +35,7 @@ alias rpack="dpkg -l | awk '/^[r]c/{print $2}'"
 alias ipack="dpkg -l | awk '/^[hi]i/{print $2}'"
 alias me="vim ~/.menv"
 alias mr="source ~/.menv"
+alias ls="ls -l --color=always"
 
 # functions
 
