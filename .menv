@@ -282,21 +282,20 @@ scala-loop() {
         return 
     fi
 
-    HAS_FSC=$(hash fsc > /dev/null 2>&1)
+    HAS_FSC=$(hash scalac > /dev/null 2>&1)
     if [ "$?" != "0" ]; then
-        echo "The 'fsc' (fast scala compiler) command is required on your PATH."
+        echo "The 'scalac' (scala compiler) command is required on your PATH."
         return
     fi
 
     cd $DIRECTORY
     while inotifywait -q -r -e modify $DIRECTORY; do
-        RESULT=$(fsc *.scala)
+        RESULT=$(scalac **/*.scala 2>&1)
         if [ "$?" != "0" ]; then
             notify-send -t 5000 "Failed compilation.\n\n$RESULT"
-            return
+        else
+            notify-send -t 5000 "Successful compilation."
         fi
-
-        notify-send -t 5000 "Successful compilation."
     done
 }
 
