@@ -6,6 +6,8 @@ call vundle#rc()
 Bundle 'gmarik/vundle'
 Bundle 'tpope/vim-fugitive'
 Bundle 'derekwyatt/vim-scala'
+Bundle 'scrooloose/syntastic'
+Bundle 'scrooloose/nerdcommenter'
 filetype plugin indent on
 
 set t_Co=256
