@@ -1,7 +1,18 @@
+" Vundle config
+set nocompatible
+filetype off
+set rtp+=~/.vim/bundle/vundle
+call vundle#rc()
+Bundle 'gmarik/vundle'
+Bundle 'tpope/vim-fugitive'
+Bundle 'derekwyatt/vim-scala'
+filetype plugin indent on
+
 set t_Co=256
 syntax on
-filetype on
-filetype plugin indent on
+
+"REQUIRED TO BE OFF BY VUNDLE!!
+"filetype on
 
 if &diff
     color inkpot
@@ -48,7 +59,6 @@ inoremap <C-E> <C-P>
 set directory=/tmp
 set nowrap
 set laststatus=2
-set nocompatible
 
 "version 6.0
 "if &cp | set nocp | endif
