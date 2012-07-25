@@ -269,6 +269,37 @@ testloop() {
     done
 }
 
+scala-loop() {
+    if [ "$#" != "1" ]; then
+        echo "usage: scala-loop DIRECTORY"
+        return
+    fi
+
+    DIRECTORY=$1
+
+    if [ ! -d $PROJECT_DIRECTORY ]; then
+        echo "The input is not a directory."
+        return 
+    fi
+
+    HAS_FSC=$(hash fsc > /dev/null 2>&1)
+    if [ "$?" != "0" ]; then
+        echo "The 'fsc' (fast scala compiler) command is required on your PATH."
+        return
+    fi
+
+    cd $DIRECTORY
+    while inotifywait -q -r -e modify $DIRECTORY; do
+        RESULT=$(fsc *.scala)
+        if [ "$?" != "0" ]; then
+            notify-send -t 5000 "Failed compilation.\n\n$RESULT"
+            return
+        fi
+
+        notify-send -t 5000 "Successful compilation."
+    done
+}
+
 function local-git-dir() {
     pwd | sha256sum | awk '{ print $1 }'
 }
