@@ -290,7 +290,8 @@ scala-loop() {
 
     cd $DIRECTORY
     while inotifywait -q -r -e modify $DIRECTORY; do
-        RESULT=$(scalac **/*.scala 2>&1)
+        SOURCE=$(find . -iname '*.scala' | xargs)
+        RESULT=$(scalac $SOURCE 2>&1)
         if [ "$?" != "0" ]; then
             notify-send -t 5000 "Failed compilation.\n\n$RESULT"
         else
