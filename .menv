@@ -37,6 +37,11 @@ alias me="vim ~/.menv"
 alias mr="source ~/.menv"
 alias ls="ls -l --color=always"
 
+#git
+alias git-unreachable="git fsck --no-reflogs | grep 'dangling commit' | awk '{print $3;}'"
+alias gitk-unreachable="git-unreachable | gitk --all --date-order"
+alias git-prune-unreachable="git reflog expire --expire-unreachable=now --all && git gc --prune=now"
+
 # functions
 
 # echo processes matching a string 
