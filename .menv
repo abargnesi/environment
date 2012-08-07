@@ -8,7 +8,7 @@ export EDITOR=vim
 export TERMINAL=xterm
 export SVN_ROOT=https://svn.assembla.com/svn/selventa_bel
 export SVN_EDITOR=vim
-export JAVA_OPTS="-ea -Xdebug -Xrunjdwp:transport=dt_socket,address=1044,server=y,suspend=n -XX:-HeapDumpOnOutOfMemoryError -XX:MaxPermSize=256M"
+#export JAVA_OPTS="-ea -Xdebug -Xrunjdwp:transport=dt_socket,address=1044,server=y,suspend=n -XX:-HeapDumpOnOutOfMemoryError -XX:MaxPermSize=256M"
 export TERM="xterm-256color"
 export REPO_CD=$HOME/work/selventa_bel/belframework/branches/r1.2.0
 export GTK2_RC_FILES=$HOME/.themes/Clearlooks-DarkLime/gtk-2.0/gtkrc
