@@ -329,6 +329,33 @@ function local-git-init() {
     GIT_DIR="${ENV_REPOS_PATH}/$(local-git-dir)" git init
 }
 
+function eclipse-workspace() {
+    # checks
+    if [ $# -ne 1 ]; then
+        echo "usage: eclipse-workspace WORKSPACE_DIRECTORY"
+        return
+    fi
+
+    METADATA=$HOME/configurations/eclipse-workspace.tar.bz2
+    if [ ! -f $METADATA ]; then
+        echo "Saved metadata does not exist, refusing."
+        return
+    fi 
+
+    ECLIPSE_WORKSPACE=$1
+    if [ -d $ECLIPSE_WORKSPACE/.metadata ]; then
+        echo "Metadata already exists, refusing."
+        return
+    fi
+
+    # action
+    if [ ! -d $ECLIPSE_WORKSPACE ]; then
+        mkdir -p $ECLIPSE_WORKSPACE
+    fi
+
+    tar xf $METADATA --directory $ECLIPSE_WORKSPACE
+}
+
 # custom init
 if [ ! -z "$DISPLAY" ]; then
 	wmname LG3D
