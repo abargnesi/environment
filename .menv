@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # env
+export ENV_LOCAL_DIRECTORY=$HOME/.env_locals
 export ANT_HOME=$HOME/tools/apache-ant-1.8.2
 export SCALA_HOME=$HOME/tools/scala-2.9.1
 export PATH=$PATH:$HOME/bin:$HOME/work/git/mediawiki_cli:$JAVA_HOME/bin:$HOME/tools/bundlor/bin:$ANT_HOME/bin:$SCALA_HOME/bin
@@ -15,6 +16,12 @@ export GTK2_RC_FILES=$HOME/.themes/Clearlooks-DarkLime/gtk-2.0/gtkrc
 export VTS=$HOME/tools/osgi/vts
 export VTS_REPO_EXT=$VTS/repository/ext
 export VTS_REPO_USR=$VTS/repository/usr
+
+# git environment config
+export PS1='[\u@\h \W$(__git_ps1 " (%s)")]\$ '
+export GIT_PS1_SHOWDIRTYSTATE=yes
+export GIT_PS1_SHOWSTASHSTATE=yes
+export GIT_PS1_SHOWUPSTREAM="verbose"
 
 #aliases
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
@@ -368,6 +375,7 @@ fi
 # source local overrides
 # load locals, if present
 if [ ! -z $ENV_LOCAL ] && [ -e $ENV_LOCAL ]; then
+    source $ENV_LOCAL_DIRECTORY/.git_completion.sh
     source $ENV_LOCAL
 fi
 
