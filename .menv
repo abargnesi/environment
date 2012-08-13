@@ -9,7 +9,6 @@ export EDITOR=vim
 export TERMINAL=xterm
 export SVN_ROOT=https://svn.assembla.com/svn/selventa_bel
 export SVN_EDITOR=vim
-#export JAVA_OPTS="-ea -Xdebug -Xrunjdwp:transport=dt_socket,address=1044,server=y,suspend=n -XX:-HeapDumpOnOutOfMemoryError -XX:MaxPermSize=256M"
 export TERM="xterm-256color"
 export REPO_CD=$HOME/work/selventa_bel/belframework/branches/r1.2.0
 export GTK2_RC_FILES=$HOME/.themes/Clearlooks-DarkLime/gtk-2.0/gtkrc
@@ -336,9 +335,71 @@ function local-git-init() {
     GIT_DIR="${ENV_REPOS_PATH}/$(local-git-dir)" git init
 }
 
+function git-cherry-pick-interactive() {
+    if [ $# != 1 ]; then
+        echo "usage: git-cherry-interactive <commit notation>"
+        return
+    fi
+
+    COMMIT_EXPR=$1
+    DATE=$(date +%s)
+
+    REV_LIST_CHRONOLOGICAL=$(git rev-list $1 | tac)
+    for c in $REV_LIST_CHRONOLOGICAL; do
+        echo "Commit: $c"
+        git log $c --stat -n1
+        
+        ANSWER=-1
+        while [ $ANSWER == -1 ]; do
+            echo "Do you want to cherry-pick this commit? ( y/n yes/no YES/NO )"
+            read RESPONSE
+
+            case $RESPONSE in
+                [yY] | [yY][eE][sS]) ANSWER=1
+                   ;;
+                [nN] | [nN][oO]) ANSWER=0
+                   ;;
+                *) echo "Invalid response."
+                   ANSWER=-1
+                   ;;
+            esac
+        done
+
+        if [ $ANSWER == 1 ]; then
+            declare -a PARENTS=($(git rev-list --parents -n1 $c))
+
+            if [ ${#PARENTS[@]} == 3 ]; then
+                PARENT1="${PARENTS[1]}"
+                PARENT2="${PARENTS[2]}"
+                echo "This commit has multiple parents."
+                echo "    1: $PARENT1"
+                echo "    2: $PARENT2"
+                echo ""
+                echo "Which commit is the mainline? ( 1 / 2 )"
+                read COMMIT
+                git cherry-pick -m $COMMIT $c
+            else
+                git cherry-pick $c
+                EC=$?
+                echo ""
+                if [ $EC != 0 ]; then
+                    echo $EC
+                    echo "Cherry-pick merge failed.  Fix up tree before continuing."
+                    echo "Enter when you want to proceed."
+                    read PROCEED
+                fi
+            fi
+            
+            echo "$c" >> "cherrypick.$DATE"
+        else
+            echo "Skipping commit $c"
+        fi
+    done
+}
+
 function eclipse-workspace() {
     # checks
-    if [ $# -ne 1 ]; then
+    if [ $# != 1 ]; then
         echo "usage: eclipse-workspace WORKSPACE_DIRECTORY"
         return
     fi
@@ -361,6 +422,14 @@ function eclipse-workspace() {
     fi
 
     tar xf $METADATA --directory $ECLIPSE_WORKSPACE
+}
+
+function set-java-debug-option() {
+    export JAVA_OPTS="-ea -Xdebug -Xrunjdwp:transport=dt_socket,address=1044,server=y,suspend=n -XX:-HeapDumpOnOutOfMemoryError -XX:MaxPermSize=256M"
+}
+
+function unset-java-debug-option() {
+    unset JAVA_OPTS
 }
 
 # custom init
