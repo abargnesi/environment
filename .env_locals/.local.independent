@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
-export JAVA_HOME=/usr/lib/jvm/java-6-sun
+
+function setjdk6() {
+    export JAVA_HOME=/usr/lib/jvm/java-6-sun
+    export PATH="$JAVA_HOME/bin:$PATH"
+}
+
+function setjdk7() {
+    export JAVA_HOME=/usr/lib/jvm/jdk1.7.0_05
+    export PATH="$JAVA_HOME/bin:$PATH"
+}
+
+setjdk7
 
 # load a specific eclipse workspace
 workspace() {

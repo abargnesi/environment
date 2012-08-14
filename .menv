@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # env
+export ENV_LOCAL_DIRECTORY=$HOME/.env_locals
 export ANT_HOME=$HOME/tools/apache-ant-1.8.2
 export SCALA_HOME=$HOME/tools/scala-2.9.1
 export PATH=$PATH:$HOME/bin:$HOME/work/git/mediawiki_cli:$JAVA_HOME/bin:$HOME/tools/bundlor/bin:$ANT_HOME/bin:$SCALA_HOME/bin
@@ -8,13 +9,18 @@ export EDITOR=vim
 export TERMINAL=xterm
 export SVN_ROOT=https://svn.assembla.com/svn/selventa_bel
 export SVN_EDITOR=vim
-#export JAVA_OPTS="-ea -Xdebug -Xrunjdwp:transport=dt_socket,address=1044,server=y,suspend=n -XX:-HeapDumpOnOutOfMemoryError -XX:MaxPermSize=256M"
 export TERM="xterm-256color"
 export REPO_CD=$HOME/work/selventa_bel/belframework/branches/r1.2.0
 export GTK2_RC_FILES=$HOME/.themes/Clearlooks-DarkLime/gtk-2.0/gtkrc
 export VTS=$HOME/tools/osgi/vts
 export VTS_REPO_EXT=$VTS/repository/ext
 export VTS_REPO_USR=$VTS/repository/usr
+
+# git environment config
+export PS1='[\u@\h \W$(__git_ps1 " (%s)")]\$ '
+export GIT_PS1_SHOWDIRTYSTATE=yes
+export GIT_PS1_SHOWSTASHSTATE=yes
+export GIT_PS1_SHOWUPSTREAM="verbose"
 
 #aliases
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
@@ -329,9 +335,71 @@ function local-git-init() {
     GIT_DIR="${ENV_REPOS_PATH}/$(local-git-dir)" git init
 }
 
+function git-cherry-pick-interactive() {
+    if [ $# != 1 ]; then
+        echo "usage: git-cherry-interactive <commit notation>"
+        return
+    fi
+
+    COMMIT_EXPR=$1
+    DATE=$(date +%s)
+
+    REV_LIST_CHRONOLOGICAL=$(git rev-list $1 | tac)
+    for c in $REV_LIST_CHRONOLOGICAL; do
+        echo "Commit: $c"
+        git log $c --stat -n1
+        
+        ANSWER=-1
+        while [ $ANSWER == -1 ]; do
+            echo "Do you want to cherry-pick this commit? ( y/n yes/no YES/NO )"
+            read RESPONSE
+
+            case $RESPONSE in
+                [yY] | [yY][eE][sS]) ANSWER=1
+                   ;;
+                [nN] | [nN][oO]) ANSWER=0
+                   ;;
+                *) echo "Invalid response."
+                   ANSWER=-1
+                   ;;
+            esac
+        done
+
+        if [ $ANSWER == 1 ]; then
+            declare -a PARENTS=($(git rev-list --parents -n1 $c))
+
+            if [ ${#PARENTS[@]} == 3 ]; then
+                PARENT1="${PARENTS[1]}"
+                PARENT2="${PARENTS[2]}"
+                echo "This commit has multiple parents."
+                echo "    1: $PARENT1"
+                echo "    2: $PARENT2"
+                echo ""
+                echo "Which commit is the mainline? ( 1 / 2 )"
+                read COMMIT
+                git cherry-pick -m $COMMIT $c
+            else
+                git cherry-pick $c
+                EC=$?
+                echo ""
+                if [ $EC != 0 ]; then
+                    echo $EC
+                    echo "Cherry-pick merge failed.  Fix up tree before continuing."
+                    echo "Enter when you want to proceed."
+                    read PROCEED
+                fi
+            fi
+            
+            echo "$c" >> "cherrypick.$DATE"
+        else
+            echo "Skipping commit $c"
+        fi
+    done
+}
+
 function eclipse-workspace() {
     # checks
-    if [ $# -ne 1 ]; then
+    if [ $# != 1 ]; then
         echo "usage: eclipse-workspace WORKSPACE_DIRECTORY"
         return
     fi
@@ -356,10 +424,6 @@ function eclipse-workspace() {
     tar xf $METADATA --directory $ECLIPSE_WORKSPACE
 }
 
-function set-debug() {
-    export JAVA_OPTS="-ea -Xdebug -Xrunjdwp:transport=dt_socket,address=1044,server=y,suspend=n -XX:-HeapDumpOnOutOfMemoryError -XX:MaxPermSize=256M"
-}
-
 function local-forward() {
     if [ $# -ne 3 ]; then
         echo "usage: local-forward <remote> <local-port> <remote-port>"
@@ -367,6 +431,13 @@ function local-forward() {
     fi
 
     ssh -nN -L $2:$1:$3 $1
+
+function set-java-debug-option() {
+    export JAVA_OPTS="-ea -Xdebug -Xrunjdwp:transport=dt_socket,address=1044,server=y,suspend=n -XX:-HeapDumpOnOutOfMemoryError -XX:MaxPermSize=256M"
+}
+
+function unset-java-debug-option() {
+    unset JAVA_OPTS
 }
 
 # custom init
@@ -381,6 +452,7 @@ fi
 # source local overrides
 # load locals, if present
 if [ ! -z $ENV_LOCAL ] && [ -e $ENV_LOCAL ]; then
+    source $ENV_LOCAL_DIRECTORY/.git_completion.sh
     source $ENV_LOCAL
 fi
 
