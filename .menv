@@ -356,6 +356,19 @@ function eclipse-workspace() {
     tar xf $METADATA --directory $ECLIPSE_WORKSPACE
 }
 
+function set-debug() {
+    export JAVA_OPTS="-ea -Xdebug -Xrunjdwp:transport=dt_socket,address=1044,server=y,suspend=n -XX:-HeapDumpOnOutOfMemoryError -XX:MaxPermSize=256M"
+}
+
+function local-forward() {
+    if [ $# -ne 3 ]; then
+        echo "usage: local-forward <remote> <local-port> <remote-port>"
+        return
+    fi
+
+    ssh -nN -L $2:$1:$3 $1
+}
+
 # custom init
 if [ ! -z "$DISPLAY" ]; then
 	wmname LG3D
