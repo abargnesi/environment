@@ -53,6 +53,10 @@ alias git-au='git add $(git ls-files -u)'
 alias git-ao='git add $(git ls-files -o)'
 alias dup='REF=$(git symbolic-ref HEAD); git log upstream/${REF##refs/heads/}..$REF'
 alias dfk='REF=$(git symbolic-ref HEAD); git log fork/${REF##refs/heads/}..$REF'
+alias pup='REF=$(git symbolic-ref HEAD); git push upstream $REF'
+alias fup='REF=$(git symbolic-ref HEAD); git fetch upstream $REF'
+alias pfk='REF=$(git symbolic-ref HEAD); git push fork $REF'
+alias ffk='REF=$(git symbolic-ref HEAD); git fetch fork $REF'
 
 # functions
 
