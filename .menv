@@ -47,6 +47,12 @@ alias ls="ls -l --color=always"
 alias git-unreachable="git fsck --no-reflogs | grep 'dangling commit' | awk '{print $3;}'"
 alias gitk-unreachable="git-unreachable | gitk --all --date-order"
 alias git-prune-unreachable="git reflog expire --expire-unreachable=now --all && git gc --prune=now"
+alias git-am='git add $(git ls-files -m)'
+alias git-ad='git add $(git ls-files -d)'
+alias git-au='git add $(git ls-files -u)'
+alias git-ao='git add $(git ls-files -o)'
+alias dup='REF=$(git symbolic-ref HEAD) git log upstream/${REF##refs/heads/}..$REF'
+alias dfk='REF=$(git symbolic-ref HEAD) git log fork/${REF##refs/heads/}..$REF'
 
 # functions
 
