@@ -47,6 +47,8 @@ alias ls="ls -l --color=always"
 alias git-unreachable="git fsck --no-reflogs | grep 'dangling commit' | awk '{print $3;}'"
 alias gitk-unreachable="git-unreachable | gitk --all --date-order"
 alias git-prune-unreachable="git reflog expire --expire-unreachable=now --all && git gc --prune=now"
+alias gs='git status -uno'
+alias gst='git status'
 alias git-am='git add $(git ls-files -m)'
 alias git-ad='git add $(git ls-files -d)'
 alias git-au='git add $(git ls-files -u)'
@@ -54,9 +56,9 @@ alias git-ao='git add $(git ls-files -o)'
 alias dup='REF=$(git symbolic-ref HEAD); git log upstream/${REF##refs/heads/}..$REF'
 alias dfk='REF=$(git symbolic-ref HEAD); git log fork/${REF##refs/heads/}..$REF'
 alias pup='REF=$(git symbolic-ref HEAD); git push upstream $REF'
-alias fup='REF=$(git symbolic-ref HEAD); git fetch upstream $REF'
+alias fup='REF=$(git symbolic-ref HEAD); git fetch upstream; git fetch upstream $REF'
 alias pfk='REF=$(git symbolic-ref HEAD); git push fork $REF'
-alias ffk='REF=$(git symbolic-ref HEAD); git fetch fork $REF'
+alias ffk='REF=$(git symbolic-ref HEAD); git fetch fork; git fetch fork $REF'
 
 # functions
 
