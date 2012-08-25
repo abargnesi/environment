@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+#sourcing
+source $HOME/bin/git-completion
+
 # env
 export ENV_LOCAL_DIRECTORY=$HOME/.env_locals
 export ANT_HOME=$HOME/tools/apache-ant-1.8.2
