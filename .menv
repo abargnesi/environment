@@ -45,6 +45,8 @@ alias ipack="dpkg -l | awk '/^[hi]i/{print $2}'"
 alias me="vim ~/.menv"
 alias mr="source ~/.menv"
 alias ls="ls -l --color=always"
+alias goto-sdp='cd $HOME/work/git/sdp/ && source env.sh'
+alias goto-sdp-rest='cd $HOME/work/git/sdp/tools/virgo-tomcat-server-3.5.0/data/Python/custom/sdp'
 
 #git
 alias git-unreachable="git fsck --no-reflogs | grep 'dangling commit' | awk '{print $3;}'"
