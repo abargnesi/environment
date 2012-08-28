@@ -1,4 +1,14 @@
+function setjdk6() {
+    export JAVA_HOME=/usr/lib/jvm/jdk1.6.0_25
+    export PATH="$JAVA_HOME/bin:$PATH"
+}
+
+function setjdk7() {
+    export JAVA_HOME=/usr/lib/jvm/java-7-openjdk
+    export PATH="$JAVA_HOME/bin:$PATH"
+}
+
+setjdk7
+
 export BUILDR_HOME=$HOME/tools/buildr-1.4.7
-export JAVA_HOME=/usr/lib/jvm/jdk1.7.0_05
-#export JAVA_HOME=/usr/lib/jvm/jdk1.6.0_25
 export PATH="$JAVA_HOME/bin:$BUILDR_HOME/bin:$PATH"
